@@ -6,86 +6,93 @@
 grammar rets19;
 
 exp
-    : orExp
-    ;
+  : orExp
+  | collection
+  ;
 
 orExp
-    : andExp (OR andExp)*
-    ;
+  : andExp (OR andExp)*
+  ;
 
 andExp
-    : notExp (AND notExp)*
-    ;
+  : notExp (AND notExp)*
+  ;
 
 notExp
-    : NOT notExp
-    | eqExp
-    ;
+  : NOT notExp
+  | eqExp
+  ;
 
 eqExp
-    : cmpExp
-    | cmpExp EQ cmpExp
-    | cmpExp NE cmpExp
-    ;
+  : cmpExp
+  | cmpExp EQ cmpExp
+  | cmpExp NE cmpExp
+  ;
 
 cmpExp
-    : cntExp
-    | cntExp LTE cntExp
-    | cntExp GTE cntExp
-    | cntExp LT cntExp
-    | cntExp GT cntExp
-    ;
+  : cntExp
+  | cntExp LTE cntExp
+  | cntExp GTE cntExp
+  | cntExp LT cntExp
+  | cntExp GT cntExp
+  ;
 
 cntExp
-    : sumExp
-    | sumExp CONTAINS sumExp
-    | sumExp IN list
-    ;
+  : sumExp
+  | sumExp CONTAINS sumExp
+  | sumExp IN list
+  ;
 
 sumExp
-    : prodExp ((PLUS|MINUS|CONCAT) prodExp)*
-    ;
+  : prodExp ((PLUS|MINUS|CONCAT) prodExp)*
+  ;
 
 prodExp
-    : atomExp ((ASTERISK|SLASH|MOD) atomExp)*
-    ;
+  : atomExp ((ASTERISK|SLASH|MOD) atomExp)*
+  ;
 
 atomExp
-    : LPAREN exp RPAREN
-    | list
-    | funcExp
-    | value
-    ;
-
-funcExp
-    : func LPAREN (param (COMMA param)*)? RPAREN
-    ;
-
-func
-    : ALPHANUM
-    ;
+  : LPAREN exp RPAREN
+  | list
+  | funcExp
+  | value
+  ;
 
 list
-    : LPAREN (exp (COMMA exp)*)? RPAREN
-    ;
+  : LPAREN (exp (COMMA exp)*)? RPAREN
+  ;
+
+funcExp
+  : func LPAREN (param (COMMA param)*)? RPAREN
+  ;
+
+collection
+  : (LIST | SET) LPAREN (exp (COMMA exp)*)? RPAREN
+  | (UNION | INTERSECTION | DIFFERENCE) LPAREN (collection COMMA collection (COMMA collection)*)? RPAREN
+  ;
+
+func
+  : SPECFUNC
+  | ALPHANUM
+  ;
 
 param
     : exp
     ;
 
 value
-    : fieldName
-    | specValue
-    | charValue
-    | intValue
-    | floatValue
-    | timeValue
-    ;
+  : fieldName
+  | specValue
+  | charValue
+  | intValue
+  | floatValue
+  | timeValue
+  ;
 
 fieldName
-     : (LAST)? RETSNAME
-     | LBRACKET (LAST)? RETSNAME RBRACKET
-     ;
+  : (LAST)? RETSNAME
+  | LBRACKET (LAST)? RETSNAME RBRACKET
+  ;
 
 specValue : DOT RETSNAME DOT;
 
@@ -130,40 +137,65 @@ PIPE: '|';
 LBRACKET: '[';
 RBRACKET: ']';
 HASH: '#';
+IIF: 'IIF';
 LAST: 'LAST';
+LIST: 'LIST';
+SET: 'SET';
+DIFFERENCE: 'DIFFERENCE';
+INTERSECTION: 'INTERSECTION';
+UNION: 'UNION';
+TRUE: 'TRUE';
+FALSE: 'FALSE';
+EMPTY: 'EMPTY';
+TODAY: 'TODAY';
+NOW: 'NOW';
+ENTRY: 'ENTRY';
+OLDVALUE: 'OLDVALUE';
+USERID: 'USERID';
+USERCLASS: 'USERCLASS';
+USERLEVEL: 'USERLEVEL';
+AGENTCODE: 'AGENTCODE';
+BROKERCODE: 'BROKERCODE';
+BROKERBRANCH: 'BROKERBRANCH';
+UPDATEACTION: 'UPDATEACTION';
+ANY: 'any';
 
 //special tokens
 RETSNAME
-    : DICTNAME
-    | SPECOP
-    ;
+  : DICTNAME
+  | SPECOP
+  ;
 
-//TODO: fill in dictnames
+//TODO: dynamically fill in your dictnames here
 DICTNAME
-    : 'ListPrice'
-    | 'Status'
-    | 'CloseDate'
-    | 'Bedrooms'
-    | 'Bathrooms'
-    ;
+  : 'ListPrice'
+  | 'Status'
+  | 'CloseDate'
+  | 'Bedrooms'
+  | 'Bathrooms'
+  ;
+
+SPECFUNC
+  : IIF
+  ;
 
 SPECOP
-    :   'EMPTY'
-    |   'TRUE'
-    |   'FALSE'
-    |   'TODAY'
-    |   'NOW'
-    |   'ENTRY'
-    |   'OLDVALUE'
-    |   'USERID'
-    |   'USERCLASS'
-    |   'USERLEVEL'
-    |   'AGENTCODE'
-    |   'BROKERCODE'
-    |   'BROKERBRANCH'
-    |   'UPDATEACTION'
-    |   'any'
-    ;
+  : EMPTY
+  | TRUE
+  | FALSE
+  | TODAY
+  | NOW
+  | ENTRY
+  | OLDVALUE
+  | USERID
+  | USERCLASS
+  | USERLEVEL
+  | AGENTCODE
+  | BROKERCODE
+  | BROKERBRANCH
+  | UPDATEACTION
+  | ANY
+  ;
 
 RETSDATETIME: '##TODO##';
 ALPHA: ('a'..'z' | 'A'..'Z');

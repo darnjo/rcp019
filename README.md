@@ -1,9 +1,8 @@
-# rets19
-ANTLR 4 implementation of the RETS 1.9 grammar
+# RCP-019
+ANTLR 4 implementation of the RETS 1.9 and RESO RCP-019 grammar
 
 
-
-## 20180506 - using the included rets19.g4 file, the following expressions should parse:
+## 20180506 - using the included `rets19.g4` file, the following expressions should parse:
 
 * Basic arithmetic  
 `3 + 5`
@@ -39,4 +38,18 @@ any of the RETSNAME keywords
 * Which parses differently than  
 `ListPrice > 5.01 .AND. (1, 2, 3) .CONTAINS. 3
     .OR. Status .IN. ('Active', 'Pending') .AND. .USERLEVEL. != "Admin"`
-
+    
+    
+## 20190304 - added `collection` support    
+    
+* RCP-019.1 added support for `collections` which include `LIST()` and `SET()`. 
+Backwards compatibility with the previous list syntax of `()` has been preserved.
+  * `LIST(1, 2, 2, 3)`
+  * `SET(1, 2, 2, 3)`    //interpreter should produce `SET(1, 2, 3)`
+  
+* RCP-019.1 also added support for `DIFFERENCE()`, `INTERSECTION()`, and `UNION()`,
+which produce items of type `SET()`. 
+These items require at least two arguments of type `LIST()` or `SET()`
+  * `DIFFERENCE(LIST(), LIST())` &nbsp;&nbsp;&nbsp;&nbsp; `//should produce LIST()`
+  * `UNION(LIST(1, 2), SET(3))` &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`//should produce SET(1, 2, 3)`
+  * `INTERSECTION(SET(DIFFERENCE(LIST(1, 2, 3), LIST(2, 3))), LIST('a', 'b'))` `//should produce SET()`
