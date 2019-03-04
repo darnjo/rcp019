@@ -1,5 +1,5 @@
-# RCP-019
-ANTLR 4 implementation of the RETS 1.9 and RESO RCP-019 grammar
+# RESO RCP-019
+ANTLR 4 implementation of the RESO RCP-019 grammar, with backwards-compatibility support for RETS 1.9 Validation Expressions.
 
 
 ## 20180506 - using the included `rets19.g4` file, the following expressions should parse:
