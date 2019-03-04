@@ -1,9 +1,18 @@
 /*
- MIT License https://github.com/darnjo/rets19/blob/master/LICENSE
+
+ MIT License https://github.com/darnjo/rcp019/blob/master/LICENSE
  Copyright (c) 2018 Joshua Darnell (josh@kurotek.com)
+
+ NOTE: this file is written with the intent of preserving the structure of the original RETS 1.9 VE grammar
+ so that anyone who has implemented their systems using it shouldn't have to make any changes unless they
+ are wanting to support the new features. In other words, all changes made to this grammar so far have been additive.
+ There are more optimal representations of this file that will accept the RESO RCP-019 grammar, and as long as your
+ parser supports an equivalent set of symbols and expressions, then the internals of your system are for you to decide.
+ This example grammar should already perform reasonably well in most situations.
+
 */
 
-grammar rets19;
+grammar rcp019;
 
 exp
   : orExp

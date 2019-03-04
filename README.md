@@ -43,13 +43,22 @@ any of the RETSNAME keywords
 ## 20190304 - added `collection` support    
     
 * RCP-019.1 added support for `collections` which include `LIST()` and `SET()`. 
-Backwards compatibility with the previous list syntax of `()` has been preserved.
-  * `LIST(1, 2, 2, 3)`&nbsp;&nbsp;&nbsp;`//new LIST() with elements 1, 2, 2, 3`
-  * `SET(1, 2, 2, 3)`&nbsp;&nbsp;&nbsp;`//interpreter should produce SET(1, 2, 3)`
+These functions take 0 or more items. Backwards compatibility with the previous list syntax of `()` has been preserved.
+
+| Expression  | Result |  Comments |
+|---|---|---|
+|`LIST(1, 2, 2, 3)`|`LIST(1, 2, 2, 3`| Duplicate items are _preserved_.|
+|`SET(1, 2, 2, 3)`|`SET(1, 2, 3)`| Duplicate items are _removed_.|
+
   
 * RCP-019.1 also added support for `DIFFERENCE()`, `INTERSECTION()`, and `UNION()`,
 which produce items of type `SET()`. 
-These items require at least two arguments of type `LIST()` or `SET()`
-  * `DIFFERENCE(LIST(), LIST())`&nbsp;&nbsp;`//should produce LIST()`
-  * `UNION(LIST(1, 2), SET(3))`&nbsp;&nbsp;&nbsp;`//should produce SET(1, 2, 3)`
-  * `INTERSECTION(SET(DIFFERENCE(LIST(1, 2, 3), LIST(2, 3))), LIST('a', 'b'))`&nbsp;&nbsp;&nbsp;`//should produce SET()`
+
+These special functions require at least two arguments of type `LIST()` or `SET()`
+   
+ 
+ | Expression  | Result |  Comments |
+ |---|---|---|
+ |`DIFFERENCE(LIST(), LIST())`|`SET()`|Collection operators require two or more `LIST()` or `SET()` arguments.|
+ |`UNION(LIST(1, 2), SET(3))`|`SET(1, 2, 3)`|Arguments of type `LIST()` are converted to `SET()`.   |
+ |`INTERSECTION(SET(DIFFERENCE(LIST(1, 2, 3), LIST(2, 3))), LIST('a', 'b'))`|`SET()`|Since the return type of `collection` operators is `SET()`, they can be composed.|
