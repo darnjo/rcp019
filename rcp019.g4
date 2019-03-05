@@ -17,6 +17,7 @@ grammar rcp019;
 exp
   : orExp
   | collection
+  | funcExp
   ;
 
 orExp
@@ -34,43 +35,41 @@ notExp
 
 eqExp
   : cmpExp
-  | cmpExp EQ cmpExp
-  | cmpExp NE cmpExp
+  | cmpExp (NE | EQ) cmpExp
   ;
 
 cmpExp
   : cntExp
-  | cntExp LTE cntExp
-  | cntExp GTE cntExp
-  | cntExp LT cntExp
-  | cntExp GT cntExp
+  | cntExp (LTE | GTE | LT | GT) cntExp
   ;
 
 cntExp
   : sumExp
-  | sumExp CONTAINS sumExp
-  | sumExp IN list
+  | sumExp (CONTAINS | IN) sumExp
   ;
 
 sumExp
-  : prodExp ((PLUS|MINUS|CONCAT) prodExp)*
+  : prodExp ((PLUS | MINUS | CONCAT) prodExp)*
   ;
 
 prodExp
-  : atomExp ((ASTERISK|SLASH|MOD) atomExp)*
+  : atomExp ((ASTERISK | SLASH | MOD) atomExp)*
   ;
 
+// NOTE:  original VE writing had that all lists of size 1 were atomExp, not list.
+// LIST() and SET() were created instead as a top-level item called 'collection' and should be used instead.
 atomExp
   : LPAREN exp RPAREN
   | list
-  | funcExp
   | value
   ;
 
+// this was left in for backwards compatibility with the first production rule, LPAREN exp RPAREN
 list
   : LPAREN (exp (COMMA exp)*)? RPAREN
   ;
 
+// this was previously an atomExp, but was moved to the top-level for faster parsing (10x speedup)
 funcExp
   : func LPAREN (param (COMMA param)*)? RPAREN
   ;
@@ -80,14 +79,15 @@ collection
   | (UNION | INTERSECTION | DIFFERENCE) LPAREN (collection COMMA collection (COMMA collection)*)? RPAREN
   ;
 
+// SPECFUNC was added. LOCALFUNC could be added as well, with corresponding known local functions
 func
   : SPECFUNC
   | ALPHANUM
   ;
 
 param
-    : exp
-    ;
+  : exp
+  ;
 
 value
   : fieldName
@@ -104,15 +104,10 @@ fieldName
   ;
 
 specValue : DOT RETSNAME DOT;
-
 charValue : QUOTED_TERM;
-
 timeValue : HASH RETSDATETIME HASH;
-
-intValue : (PLUS|MINUS)? DIGIT+ ;
-
+intValue : (PLUS | MINUS)? DIGIT+ ;
 floatValue : intValue DOT DIGIT+;
-
 
 // Tokens - may be moved to lexer file
 CONCAT : PIPE;
@@ -146,6 +141,7 @@ PIPE: '|';
 LBRACKET: '[';
 RBRACKET: ']';
 HASH: '#';
+
 IIF: 'IIF';
 LAST: 'LAST';
 LIST: 'LIST';
@@ -169,13 +165,13 @@ BROKERBRANCH: 'BROKERBRANCH';
 UPDATEACTION: 'UPDATEACTION';
 ANY: 'any';
 
-//special tokens
+// special tokens
 RETSNAME
   : DICTNAME
   | SPECOP
   ;
 
-//TODO: dynamically fill in your dictnames here
+// TODO: dynamically fill in your dictnames here
 DICTNAME
   : 'ListPrice'
   | 'Status'
