@@ -2,7 +2,7 @@
 ANTLR 4 implementation of the RESO RCP-019 grammar, with backwards-compatibility support for RETS 1.9 Validation Expressions.
 
 
-## 20180506 - using the included `rets19.g4` file, the following expressions should parse:
+## 20180506 - using the included `rcp019.g4` file, the following expressions should parse:
 
 * Basic arithmetic  
 `3 + 5`
@@ -52,13 +52,18 @@ These functions take 0 or more items. Backwards compatibility with the previous 
 
   
 * RCP-019.1 also added support for `DIFFERENCE()`, `INTERSECTION()`, and `UNION()`,
-which produce items of type `SET()`. 
+which are intended to produce types in the following manner:
+  * Operations on _homogeneous_ collections of `LIST()` or `SET()` should 
+    return `LIST()` or `SET()`, respectively. For example,
+    _`UNION(LIST('a', 'b', 3+5), LIST(6))`_ should return _`LIST('a', 'b', 6, 8)`_.
+  * Operations on _heterogenous_ collections of `LIST()` or `SET()`, for 
+    instance _`DIFFERENCE(LIST(1, 2, 3), SET(3))`_ should return _`LIST()`_.      
 
 These special functions require at least two arguments of type `LIST()` or `SET()`
    
  
  | Expression  | Result |  Comments |
  |---|---|---|
- |`DIFFERENCE(LIST(), LIST())`|`SET()`|Collection operators require two or more `LIST()` or `SET()` arguments.|
- |`UNION(LIST(1, 2), SET(3))`|`SET(1, 2, 3)`|Arguments of type `LIST()` are converted to `SET()`.   |
+ |`DIFFERENCE(LIST(), LIST())`|`LIST()`|Collection operators require two or more `LIST()` or `SET()` arguments.|
+ |`UNION(LIST(1, 2), SET(3))` |`SET(1, 2, 3)`|Arguments of type `LIST()` are converted to `SET()`.   |
  |`INTERSECTION(SET(DIFFERENCE(LIST(1, 2, 3), LIST(2, 3))), LIST('a', 'b'))`|`SET()`|Since the return type of `collection` operators is `SET()`, they can be composed.|

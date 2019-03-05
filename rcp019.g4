@@ -16,7 +16,7 @@ grammar rcp019;
 
 exp
   : orExp
-  | collection
+  | collectionExp
   | funcExp
   ;
 
@@ -74,9 +74,9 @@ funcExp
   : func LPAREN (param (COMMA param)*)? RPAREN
   ;
 
-collection
+collectionExp
   : (LIST | SET) LPAREN (exp (COMMA exp)*)? RPAREN
-  | (UNION | INTERSECTION | DIFFERENCE) LPAREN (collection COMMA collection (COMMA collection)*)? RPAREN
+  | (UNION | INTERSECTION | DIFFERENCE) LPAREN (collectionExp COMMA collectionExp (COMMA collectionExp)*)? RPAREN
   ;
 
 // SPECFUNC was added. LOCALFUNC could be added as well, with corresponding known local functions
