@@ -64,6 +64,6 @@ These special functions require at least two arguments of type `LIST()` or `SET(
  
  | Expression  | Result |  Comments |
  |---|---|---|
- |`DIFFERENCE(LIST(), LIST())`|`LIST()`|Collection operators require two or more `LIST()` or `SET()` arguments.|
- |`UNION(LIST(1, 2), SET(3))` |`SET(1, 2, 3)`|Arguments of type `LIST()` are converted to `SET()`.   |
- |`INTERSECTION(SET(DIFFERENCE(LIST(1, 2, 3), LIST(2, 3))), LIST('a', 'b'))`|`SET()`|Since the return type of `collection` operators is `SET()`, they can be composed.|
+ |`DIFFERENCE(LIST(1, 2, 3), LIST(1, 2))`|`LIST(3)`|Collection operators require two or more `LIST()` or `SET()` arguments.|
+ |`UNION(LIST(1, 2), SET(3))` |`LIST(1, 2, 3)`|Arguments of type `LIST()` are converted to `SET()`.   |
+ |`INTERSECTION(SET(DIFFERENCE(LIST(1, 2, 3), SET(1))), SET(2))`|`SET(2)`|Since the return type of `collection` operators is `SET()` or `LIST()`, they can be composed.|
